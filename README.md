@@ -828,7 +828,7 @@ blogging-platform/
 
 - **Node.js 18+**: For running the application
 - **PostgreSQL 15+**: For the database
-- **npm or yarn**: Package manager
+- **pnpm**: Package manager
 
 ### Installation
 
@@ -836,7 +836,7 @@ blogging-platform/
    ```bash
    git clone <repository-url>
    cd blogging-platform
-   npm install
+   pnpm install
    ```
 2. **Set up environment variables:**
    ```bash
@@ -849,21 +849,21 @@ blogging-platform/
    ```
 3. **Set up the database:**
    ```bash
-   cd packages/db
-   npm run generate    # Generate Drizzle schema types
-   npm run migrate     # Run database migrations
-   npm run seed        # Seed with sample data
+   # From project root
+   pnpm db:generate    # Generate Drizzle schema types
+   pnpm db:migrate     # Run database migrations
+   pnpm db:seed        # Seed with sample data
    ```
 4. **Start the development servers:**
    **Terminal 1 - Blog Frontend:**
    ```bash
    cd apps/blog
-   npm run dev
+   pnpm dev
    ```
    **Terminal 2 - API Server (when implemented):**
    ```bash
    cd apps/api
-   npm run dev
+   pnpm dev
    ```
 5. **Open your browser:**
    - Frontend: http://localhost:3000
