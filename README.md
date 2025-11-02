@@ -1,6 +1,61 @@
-# Multi-User Blogging Platform
+# BlogSpace - Modern Blogging Platform
 
-A modern, production-ready blogging platform built with **Next.js 15**, **tRPC**, **PostgreSQL**, and **Drizzle ORM**. Features enterprise-grade architecture, comprehensive testing, and deployment-ready configuration.
+A clean, modern, and performant blogging platform built with **Next.js 14**, **Firebase Authentication**, and **PostgreSQL**. Features a beautiful UI, markdown support, and user authentication.
+
+## 🚀 Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Vinishraghav/intern.git
+   cd intern
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+   Create a `.env.local` file in the `apps/blog` directory with your Firebase configuration:
+   ```
+   NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+   ```
+
+4. **Run the development server**
+   ```bash
+   cd apps/blog
+   pnpm dev
+   ```
+
+5. **Open your browser**
+   Visit [http://localhost:3000](http://localhost:3000) to see the application running.
+
+## 📝 Features
+
+- **Modern UI/UX**: Clean, responsive design with dark/light mode
+- **Authentication**: Email/password and Google sign-in
+- **Rich Text Editor**: Create beautiful blog posts with markdown
+- **Categories**: Organize posts by categories
+- **Responsive**: Works on mobile, tablet, and desktop
+- **Performance**: Optimized for fast loading and smooth interactions
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
+- **Authentication**: Firebase Authentication
+- **Database**: PostgreSQL with Drizzle ORM
+- **State Management**: React Context API
+- **UI Components**: Custom components with shadcn/ui
+- **Deployment**: Vercel (recommended)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 🚀 **Complete Feature Set**
 
