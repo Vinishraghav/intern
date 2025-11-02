@@ -1,61 +1,255 @@
-# BlogSpace - Modern Blogging Platform
+# Multi-User Blogging Platform
 
-A clean, modern, and performant blogging platform built with **Next.js 14**, **Firebase Authentication**, and **PostgreSQL**. Features a beautiful UI, markdown support, and user authentication.
+A modern, production-ready blogging platform built with **Next.js 15**, **tRPC**, **PostgreSQL**, and **Drizzle ORM**. Features enterprise-grade architecture, comprehensive testing, and deployment-ready configuration.
 
-## 🚀 Quick Start
+## 🚀 Complete Feature Set
 
-1. **Clone the repository**
+### ✅ Priority 1: Foundation
+- **Modern Tech Stack**: Next.js 15 App Router, TypeScript, Tailwind CSS
+- **Type-Safe API**: tRPC for end-to-end type safety
+- **Database**: PostgreSQL with Drizzle ORM schema management
+- **Responsive UI**: Clean design with shadcn/ui components
+- **Monorepo**: Organized with Turborepo for optimal DX
+
+### ✅ Priority 2: Core Features
+- **Rich Post Editor**: Markdown editor with live preview
+- **Category Management**: Full CRUD with filtering and relationships
+- **Advanced Blog Listing**: Search, filtering, pagination
+- **Individual Post Views**: SEO-friendly URLs with full content
+- **Draft/Published System**: Complete workflow with status management
+
+### ✅ Priority 3: Polish & Production
+- **Professional Landing Page**: 5-section layout with hero, features, CTA, tech stack, footer
+- **Dashboard**: Statistics, recent posts, quick actions
+- **Mobile Responsiveness**: Mobile-first design with hamburger navigation
+- **Dark Mode**: Theme switching with system preference detection
+- **SEO Optimization**: Meta tags, Open Graph, structured data
+- **Performance**: Optimized caching, bundle analysis, image optimization
+- **Accessibility**: WCAG compliant with ARIA labels and keyboard navigation
+- **Loading States**: Enhanced UX with skeletons and error boundaries
+- **Post Statistics**: Reading time and word count calculations
+
+## 🏗️ Architecture Overview
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Next.js App   │    │     tRPC API    │    │   PostgreSQL    │
+│   (Frontend)    │◄──►│   (Type-Safe)   │◄──►│   (Database)    │
+│                 │    │                 │    │                 │
+│ • App Router    │    │ • React Query   │    │ • Drizzle ORM   │
+│ • TypeScript    │    │ • Zod Validation│    │ • Migrations    │
+│ • Tailwind CSS  │    │ • Error Handling│    │ • Seed Data     │
+│ • Responsive UI │    │ • Caching       │    │ • Relations     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Components    │    │   State Mgmt    │    │   File System   │
+│   (shadcn/ui)   │    │   (Zustand)     │    │   (Monorepo)    │
+│                 │    │                 │    │                 │
+│ • Card, Button  │    │ • Theme State   │    │ • Turborepo     │
+│ • Form, Input   │    │ • UI Preferences│    │ • Workspaces    │
+│ • Badge, Toast  │    │ • Global State  │    │ • Shared Utils  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Next.js 15**: App Router, Server Components, TypeScript
+- **React 18**: Hooks, concurrent features, Suspense
+- **TypeScript**: Full type safety with strict mode
+- **Tailwind CSS**: Utility-first styling with custom design system
+- **shadcn/ui**: Accessible, customizable UI components
+
+### Backend & API
+- **tRPC**: End-to-end type-safe APIs with React Query integration
+- **Zod**: Runtime validation and type inference
+- **React Query**: Caching, background updates, optimistic updates
+
+### Database
+- **PostgreSQL**: Production-ready relational database
+- **Drizzle ORM**: Type-safe SQL queries and migrations
+- **Database Schema**: Posts, categories, many-to-many relationships
+
+### Development & Testing
+- **Turborepo**: Monorepo build system with caching
+- **Jest**: Unit and integration testing
+- **Testing Library**: Component testing with user interactions
+- **ESLint/Prettier**: Code quality and formatting
+
+## 📁 Project Structure
+
+```
+blogging-platform/
+├── apps/
+│   ├── blog/                    # Next.js frontend application
+│   │   ├── src/
+│   │   │   ├── app/            # App Router pages & layouts
+│   │   │   ├── components/     # React components (local)
+│   │   │   ├── lib/           # Utilities and configurations
+│   │   │   └── __tests__/      # Jest test files
+│   │   ├── package.json
+│   │   ├── next.config.js      # Next.js configuration
+│   │   └── jest.config.js      # Testing configuration
+├── packages/
+│   ├── db/                      # Database layer with Drizzle ORM
+│   ├── ui/                      # Shared UI components (shadcn/ui)
+├── services/
+│   └── trpc/                    # tRPC client and server setup
+├── libraries/
+│   └── hooks/                   # Custom React hooks & Zustand store
+├── .env.example                # Environment variables template
+├── .gitignore                  # Git ignore patterns
+├── LICENSE                     # MIT License
+├── vercel.json                 # Deployment configuration
+└── README.md                   # This file
+```
+
+## 🏃‍♂️ Getting Started
+
+### Prerequisites
+- Node.js 18+ (Latest LTS version recommended)
+- PostgreSQL 15+ (Database server - local or cloud)
+- npm (Package manager - comes with Node.js)
+
+### Quick Setup
+
+1. **Clone & Install:**
    ```bash
-   git clone https://github.com/Vinishraghav/intern.git
-   cd intern
+   git clone <repository-url>
+   cd blogging-platform
+   npm install
    ```
 
-2. **Install dependencies**
+2. **Environment Setup:**
    ```bash
-   pnpm install
+   cp .env.example .env.local
+   ```
+   Update `.env.local` with your configuration:
+   ```
+   DATABASE_URL="postgresql://username:password@localhost:5432/blogging_platform"
+   NEXT_PUBLIC_TRPC_URL="http://localhost:3001"
    ```
 
-3. **Set up environment variables**
-   Create a `.env.local` file in the `apps/blog` directory with your Firebase configuration:
-   ```
-   NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
-   NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+3. **Database Setup:**
+   ```bash
+   # Generate types and run migrations
+   pnpm db:generate
+   pnpm db:migrate
+
+   # Seed with sample data
+   pnpm db:seed
    ```
 
-4. **Run the development server**
+4. **Start Development:**
    ```bash
    cd apps/blog
    pnpm dev
    ```
 
-5. **Open your browser**
-   Visit [http://localhost:3000](http://localhost:3000) to see the application running.
+5. **Visit:**
+   - Frontend: http://localhost:3000
+   - API: http://localhost:3001 (when implemented)
 
-## 📝 Features
+## 🗄️ Database Schema
 
-- **Modern UI/UX**: Clean, responsive design with dark/light mode
-- **Authentication**: Email/password and Google sign-in
-- **Rich Text Editor**: Create beautiful blog posts with markdown
-- **Categories**: Organize posts by categories
-- **Responsive**: Works on mobile, tablet, and desktop
-- **Performance**: Optimized for fast loading and smooth interactions
+### Posts Table
+```sql
+CREATE TABLE posts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title VARCHAR(255) NOT NULL,
+  slug VARCHAR(255) NOT NULL UNIQUE,
+  content TEXT NOT NULL,
+  excerpt TEXT,
+  author VARCHAR(100) NOT NULL,
+  published BOOLEAN DEFAULT false NOT NULL,
+  published_at TIMESTAMP,
+  updated TIMESTAMP DEFAULT now(),
+  created_at TIMESTAMP DEFAULT now() NOT NULL
+);
+```
 
-## 🛠️ Tech Stack
+### Categories Table
+```sql
+CREATE TABLE categories (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(100) NOT NULL,
+  slug VARCHAR(255) NOT NULL UNIQUE,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT now() NOT NULL
+);
+```
 
-- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
-- **Authentication**: Firebase Authentication
-- **Database**: PostgreSQL with Drizzle ORM
-- **State Management**: React Context API
-- **UI Components**: Custom components with shadcn/ui
-- **Deployment**: Vercel (recommended)
+### Post Categories (Join Table)
+```sql
+CREATE TABLE post_categories (
+  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+  category_id UUID REFERENCES categories(id) ON DELETE CASCADE,
+  PRIMARY KEY (post_id, category_id)
+);
+```
+
+## 🧪 Testing Guide
+
+### Automated Tests
+```bash
+# Run all tests
+npm run test
+
+# Watch mode for development
+npm run test:watch
+
+# Generate coverage report
+npm run test:coverage
+```
+
+## 🚀 Deployment
+
+### Vercel Deployment (Recommended)
+1. **Connect Repository:**
+   ```bash
+   # Install Vercel CLI
+   npm i -g vercel
+
+   # Deploy
+   vercel --prod
+   ```
+
+2. **Environment Variables:**
+   ```
+   DATABASE_URL="your-postgresql-connection-string"
+   NEXT_PUBLIC_TRPC_URL="https://your-api-domain.vercel.app"
+   ```
+
+### Database Options
+- **Neon**: Serverless PostgreSQL (free tier available)
+- **Supabase**: PostgreSQL with built-in auth
+- **Railway**: Full-stack deployment platform
+- **AWS RDS**: Production PostgreSQL
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+1. **Fork** the repository
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add some amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a **Pull Request**
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+Built with modern web technologies and best practices:
+- **Next.js Team**: App Router and modern React features
+- **tRPC Team**: Type-safe API development
+- **Drizzle Team**: Modern ORM with excellent TypeScript support
+- **shadcn/ui**: Beautiful, accessible component library
+- **Tailwind CSS**: Utility-first CSS framework
+- **React Query Team**: Data fetching and caching
+- **Zustand Team**: Lightweight state management
 
 ## 🚀 **Complete Feature Set**
 
@@ -191,16 +385,17 @@ blogging-platform/
 3. **Database Setup:**
    ```bash
    # Generate types and run migrations
-   npm run db:generate
-   npm run db:migrate
+   pnpm db:generate
+   pnpm db:migrate
 
    # Seed with sample data
-   npm run db:seed
+   pnpm db:seed
    ```
 
 4. **Start Development:**
    ```bash
-   npm run dev
+   cd apps/blog
+   pnpm dev
    ```
 
    Visit:
@@ -211,20 +406,20 @@ blogging-platform/
 
 ```bash
 # Development
-npm run dev              # Start all services
-npm run build           # Build all applications
-npm run lint            # Lint all packages
-npm run format          # Format code with Prettier
+pnpm dev              # Start all services
+pnpm build           # Build all applications
+pnpm lint            # Lint all packages
+pnpm format          # Format code with Prettier
 
 # Database
-npm run db:generate     # Generate Drizzle types
-npm run db:migrate      # Run migrations
-npm run db:seed         # Seed sample data
+pnpm db:generate     # Generate Drizzle types
+pnpm db:migrate      # Run migrations
+pnpm db:seed         # Seed sample data
 
 # Testing
-npm run test            # Run Jest tests
-npm run test:watch      # Watch mode
-npm run test:coverage   # Coverage report
+pnpm test            # Run Jest tests
+pnpm test:watch      # Watch mode
+pnpm test:coverage   # Coverage report
 ```
 
 ## 🗄️ **Database Schema**
@@ -283,7 +478,7 @@ npm run test:coverage
 
 1. **Start Services:**
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 2. **Landing Page** (`/`):
