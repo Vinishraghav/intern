@@ -1,79 +1,40 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
-interface User {
-  id: number
+type User = {
+  id: string
   name: string
   email: string
-  avatar?: string
-}
+  isDemo: boolean
+} | null
 
 export default function Navbar() {
   const pathname = usePathname()
-  const isAuthRoute = pathname?.startsWith('/posts')
-  const isSignInOrSignUp = pathname === '/signin' || pathname === '/signup'
-  
-  // Hide navbar completely on signin/signup pages
-  if (isSignInOrSignUp) return null
-  
-  const [user, setUser] = useState<User | null>(null)
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const [user, setUser] = useState<User>(null)
 
-  // Close dropdown when clicking outside
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowDropdown(false)
-      }
+    // Check for user in localStorage
+    const storedUser = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
     }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  // Check if user is logged in
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch('/api/auth/me')
-        if (res.ok) {
-          const data = await res.json()
-          setUser(data.user)
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUser()
   }, [pathname])
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-      setUser(null)
-      router.push('/')
-      router.refresh()
-    } catch (error) {
-      console.error('Error logging out:', error)
+  const handleSignOut = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user')
     }
+    setUser(null)
+    router.push('/')
   }
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2)
+  
+  const handleProfileClick = (e: React.MouseEvent) => {
+    // Always go to profile page
+    router.push('/profile')
   }
 
   return (
@@ -96,51 +57,49 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="/stories"
+              href="/posts"
               className={`px-3 py-2 text-sm font-medium ${
-                pathname === '/stories' ? 'text-white' : 'text-gray-400 hover:text-white'
+                pathname.startsWith('/posts') ? 'text-white' : 'text-gray-400 hover:text-white'
               }`}
             >
-              Stories
+              Blog
             </Link>
           </div>
           
-          {/* Right side - Profile or Sign In */}
+          {/* Right side - Auth */}
           <div className="flex items-center">
             {user ? (
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  type="button"
-                  className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  onClick={() => setShowDropdown(!showDropdown)}
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/profile"
+                  onClick={handleProfileClick}
+                  className="flex items-center justify-center h-9 w-9 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors"
+                  title="View Profile"
                 >
-                  <span className="sr-only">Open user menu</span>
-                  <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
-                    {user.name?.charAt(0).toUpperCase() || 'U'}
-                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-white"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Sign Out
                 </button>
-                
-                {showDropdown && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-gray-700 focus:outline-none z-10">
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    >
-                      Your Profile
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    >
-                      Sign out
-                    </button>
-                  </div>
-                )}
               </div>
             ) : (
               <Link
                 href="/signin"
-                className="text-gray-400 hover:text-white px-3 py-2 text-sm font-medium"
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
               >
                 Sign In
               </Link>

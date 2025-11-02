@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
-import { headers } from 'next/headers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,15 +15,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const headersList = headers()
-  const pathname = headersList.get('x-invoke-path') || ''
-  const isAuthRoute = pathname.startsWith('/posts')
-
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {!isAuthRoute && <Navbar />}
-        <main className={isAuthRoute ? 'pt-0' : ''}>
+      <body className={`${inter.className} min-h-screen bg-gray-900 text-white`}>
+        <Navbar />
+        <main className="pt-16">
           {children}
         </main>
       </body>

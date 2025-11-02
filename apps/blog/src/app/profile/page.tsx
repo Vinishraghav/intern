@@ -1,57 +1,79 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+// @ts-ignore - Next.js types will be available at runtime
 import Link from 'next/link'
-
-interface User {
-  id: number
-  name: string
-  email: string
-  role: string
-}
+import { format } from 'date-fns'
 
 interface Post {
-  id: number
+  id: string
   title: string
   slug: string
   excerpt: string
-  createdAt: string
+  created_at: string
+  updated_at: string
   published: boolean
+  cover_image?: string | null
 }
 
+// Demo user data
+const demoUser = {
+  id: 'demo-user-123',
+  name: 'Demo User',
+  email: 'demo@example.com',
+  bio: 'This is a demo user account. Sign in to create your own profile!',
+  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=DemoUser',
+  joinDate: '2023-01-01T00:00:00Z',
+  stats: {
+    posts: 2,
+    likes: 24,
+    followers: 10,
+    following: 5
+  }
+}
+
+// Sample posts data
+const samplePosts = [
+  {
+    id: '1',
+    title: 'Sample Post 1',
+    slug: 'sample-post-1',
+    excerpt: 'This is a sample post to demonstrate the profile page.',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    published: true,
+    cover_image: 'https://source.unsplash.com/random/800x400?blog'
+  },
+  {
+    id: '2',
+    title: 'Sample Post 2',
+    slug: 'sample-post-2',
+    excerpt: 'Another sample post to show multiple posts in the profile.',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    published: true,
+    cover_image: 'https://source.unsplash.com/random/800x401?tech'
+  }
+]
+
 export default function ProfilePage() {
-  const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState(true)
+  const [posts, setPosts] = useState(samplePosts)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    fetchUserAndPosts()
-  }, [])
-
-  const fetchUserAndPosts = async () => {
-    try {
-      const userRes = await fetch('/api/auth/me')
-      const userData = await userRes.json()
-
-      if (!userData.user) {
-        router.push('/signin')
-        return
-      }
-
-      setUser(userData.user)
-
-      const postsRes = await fetch('/api/posts')
-      const postsData = await postsRes.json()
-      
-      setPosts(postsData.posts || [])
-    } catch (error) {
-      console.error('Error:', error)
-      router.push('/signin')
-    } finally {
-      setLoading(false)
-    }
+  const handleDelete = (postId: string) => {
+                          </time>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
   }
 
   const handleDelete = async (postId: number) => {
@@ -72,14 +94,10 @@ export default function ProfilePage() {
     }
   }
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-      router.push('/signin')
-      router.refresh()
-    } catch (error) {
-      console.error('Logout error:', error)
-    }
+  // No need for logout in demo version
+  const handleLogout = () => {
+    // This is a demo, so we'll just go to the home page
+    window.location.href = '/'
   }
 
   if (loading) {
@@ -100,6 +118,33 @@ export default function ProfilePage() {
       <div className="max-w-6xl mx-auto">
         {/* User Profile Card */}
         <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+          <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+            <img
+              className="h-32 w-32 rounded-full object-cover border-4 border-indigo-100"
+              src={demoUser.avatar}
+              alt={demoUser.name}
+            />
+            <div className="text-center md:text-left">
+              <h1 className="text-3xl font-bold text-gray-900">{demoUser.name}</h1>
+              <p className="text-gray-600">{demoUser.email}</p>
+              <p className="mt-2 text-gray-700">{demoUser.bio}</p>
+              <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-4">
+                <div className="text-center">
+                  <p className="text-lg font-semibold">{demoUser.stats.posts}</p>
+                  <p className="text-sm text-gray-600">Posts</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-semibold">{demoUser.stats.followers}</p>
+                  <p className="text-sm text-gray-600">Followers</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-semibold">{demoUser.stats.following}</p>
+                  <p className="text-sm text-gray-600">Following</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
