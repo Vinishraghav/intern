@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@workspace/ui": ["../../packages/ui/src"],
+      "@workspace/db": ["../../services/db/src"],
+      "@workspace/trpc": ["../../services/trpc/src"],
+      "@workspace/hooks": ["../../libraries/hooks/src"]
+    }
+  }
+}

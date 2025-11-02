@@ -1,0 +1,29 @@
+{
+  "name": "@workspace/trpc",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.80.3",
+    "@trpc/client": "^11.7.1",
+    "@trpc/next": "^11.7.1",
+    "@trpc/react-query": "^11.7.1",
+    "@trpc/server": "^11.7.1",
+    "@workspace/db": "file:../../services/db",
+    "superjson": "^2.2.5",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.24",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^4.36.1",
+    "drizzle-orm": "^0.44.7"
+  }
+}

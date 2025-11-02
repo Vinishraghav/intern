@@ -1,0 +1,221 @@
+import { z } from 'zod';
+import { router, publicProcedure } from '../trpc';
+import { db } from '@workspace/db';
+import { posts, categories } from '@workspace/db/src/schema';
+import { eq, desc, and, sql } from 'drizzle-orm';
+
+// Helper function to generate a slug from a string
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/--+/g, '-');
+}
+
+// Define input schemas
+const createPostInput = z.object({
+  title: z.string().min(1, 'Title is required'),
+  content: z.string().min(1, 'Content is required'),
+  excerpt: z.string().optional(),
+  categoryId: z.number(),
+  published: z.boolean().optional().default(false),
+  slug: z.string().optional(),
+});
+
+const updatePostInput = createPostInput.extend({
+  id: z.number(),
+});
+
+const postsQueryInput = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  category: z.string().optional(),
+  search: z.string().optional(),
+  includeDrafts: z.boolean().default(false),
+});
+
+export const postsRouter = router({
+  // Get all posts with pagination and filtering
+  getPosts: publicProcedure
+    .input(postsQueryInput)
+    .query(async ({ input }) => {
+      const { page = 1, limit = 10, category, search, includeDrafts = false } = input;
+      const offset = (page - 1) * limit;
+
+      // Build conditions
+      const conditions = [];
+      
+      if (!includeDrafts) {
+        conditions.push(eq(posts.published, true));
+      }
+
+      if (category) {
+        conditions.push(eq(categories.slug, category));
+      }
+
+      if (search) {
+        conditions.push(
+          sql`(${posts.title} LIKE ${'%' + search + '%'} OR ${posts.content} LIKE ${'%' + search + '%'})`
+        );
+      }
+
+      // Get total count
+      const [totalResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(posts)
+        .leftJoin(categories, eq(posts.categoryId, categories.id))
+        .where(conditions.length ? and(...conditions) : undefined);
+
+      const total = totalResult?.count ?? 0;
+
+      // Get paginated results
+      const results = await db
+        .select()
+        .from(posts)
+        .leftJoin(categories, eq(posts.categoryId, categories.id))
+        .where(conditions.length ? and(...conditions) : undefined)
+        .orderBy(desc(posts.publishedAt), desc(posts.createdAt))
+        .limit(limit)
+        .offset(offset);
+
+      // Format results
+      const formattedResults = results.map(({ posts, categories }) => ({
+        ...posts,
+        category: categories ? {
+          id: categories.id,
+          name: categories.name,
+          slug: categories.slug,
+        } : null
+      }));
+
+      return {
+        posts: formattedResults,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
+    }),
+
+  // Get single post by ID or slug
+  getPost: publicProcedure
+    .input(z.object({
+      id: z.number().optional(),
+      slug: z.string().optional(),
+    }))
+    .query(async ({ input }) => {
+      if (!input.id && !input.slug) {
+        throw new Error('Either id or slug must be provided');
+      }
+
+      const [result] = await db
+        .select()
+        .from(posts)
+        .leftJoin(categories, eq(posts.categoryId, categories.id))
+        .where(
+          input.id 
+            ? eq(posts.id, input.id)
+            : eq(posts.slug, input.slug as string)
+        )
+        .limit(1);
+
+      if (!result) {
+        return null;
+      }
+
+      const { posts: post, categories: category } = result;
+      
+      return {
+        ...post,
+        category: category ? {
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+        } : null,
+      };
+    }),
+
+  // Create a new post
+  createPost: publicProcedure
+    .input(createPostInput)
+    .mutation(async ({ input }) => {
+      const slug = input.slug || generateSlug(input.title);
+      const now = new Date();
+      
+      // Check if slug already exists
+      const [existing] = await db
+        .select()
+        .from(posts)
+        .where(eq(posts.slug, slug))
+        .limit(1);
+
+      if (existing) {
+        throw new Error('A post with this slug already exists');
+      }
+      
+      const [newPost] = await db
+        .insert(posts)
+        .values({
+          ...input,
+          slug,
+          publishedAt: input.published ? now : null,
+          createdAt: now,
+          updatedAt: now,
+        })
+        .returning();
+
+      return newPost;
+    }),
+
+  // Update an existing post
+  updatePost: publicProcedure
+    .input(updatePostInput)
+    .mutation(async ({ input }) => {
+      const { id, ...data } = input;
+      const now = new Date();
+      
+      if (data.slug) {
+        // Check if new slug is already taken by another post
+        const [existing] = await db
+          .select()
+          .from(posts)
+          .where(and(
+            eq(posts.slug, data.slug),
+            sql`${posts.id} != ${id}`
+          ))
+          .limit(1);
+
+        if (existing) {
+          throw new Error('A post with this slug already exists');
+        }
+      }
+      
+      const [updatedPost] = await db
+        .update(posts)
+        .set({
+          ...data,
+          updatedAt: now,
+          publishedAt: data.published ? data.publishedAt || new Date() : null,
+        })
+        .where(eq(posts.id, id))
+        .returning();
+
+      return updatedPost;
+    }),
+
+  // Delete a post
+  deletePost: publicProcedure
+    .input(z.number())
+    .mutation(async ({ input: id }) => {
+      const [deletedPost] = await db
+        .delete(posts)
+        .where(eq(posts.id, id))
+        .returning();
+
+      return deletedPost;
+    }),
+});
+
+export type PostsRouter = typeof postsRouter;

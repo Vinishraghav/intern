@@ -1,0 +1,239 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 210 20% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    
+    --muted: 210 20% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    
+    --radius: 0.5rem;
+    
+    /* Custom color variables */
+    --color-primary: 221.2 83.2% 53.3%;
+    --color-secondary: 215 16% 47%;
+    --color-background: 210 40% 98%;
+    --color-surface: 0 0% 100%;
+    --color-text: 222.2 84% 4.9%;
+    --color-text-secondary: 215 16% 47%;
+    --color-border: 214.3 31.8% 91.4%;
+    --color-accent: 214 100% 91%;
+  }
+
+  /* Disable dark mode for now as per requirements */
+  /* .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 210 40% 98%;
+    
+    --color-primary: 217.2 91.2% 59.8%;
+    --color-secondary: 210 14% 83%;
+    --color-background: 222.2 84% 4.9%;
+    --color-surface: 222.2 84% 10%;
+    --color-text: 210 40% 98%;
+    --color-text-secondary: 210 14% 83%;
+    --color-border: 217.2 32.6% 17.5%;
+    --color-accent: 217.2 91.2% 59.8%;
+    
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+    
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 0 0% 25%;
+    --input: 0 0% 20%;
+    --ring: 351 100% 86%;
+  } */
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-cream;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-rose-pink/50 rounded-full hover:bg-rose-pink/70 transition-colors;
+  }
+  
+  /* Selection styles */
+  ::selection {
+    @apply bg-rose-pink/30 text-foreground;
+  }
+  
+  /* Focus styles */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-rose-pink/50 ring-offset-2 ring-offset-white rounded;
+  }
+  
+  /* Form elements */
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='search'],
+  input[type='url'],
+  input[type='tel'],
+  input[type='number'],
+  textarea,
+  select {
+    @apply w-full px-4 py-2.5 rounded-lg border border-border bg-white text-foreground placeholder:text-muted-foreground/60 
+           focus:ring-2 focus:ring-rose-pink/50 focus:border-transparent transition-all duration-200;
+  }
+  
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-6 py-3 text-base font-medium transition-all duration-200 
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    @apply bg-rose-pink text-white hover:bg-deep-rose shadow-sm hover:shadow-md hover:-translate-y-0.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-rose-pink border-2 border-rose-pink hover:bg-rose-pink/5 hover:border-deep-rose hover:text-deep-rose;
+  }
+  
+  .btn-ghost {
+    @apply hover:bg-rose-pink/10 hover:text-rose-pink;
+  }
+  
+  /* Cards */
+  .card {
+    @apply bg-white rounded-xl border border-border shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden;
+  }
+  
+  .card-header {
+    @apply p-6 pb-0;
+  }
+  
+  .card-title {
+    @apply text-xl font-semibold text-foreground;
+  }
+  
+  .card-content {
+    @apply p-6 pt-4;
+  }
+  
+  /* Alerts */
+  .alert {
+    @apply p-4 rounded-lg border;
+  }
+  
+  .alert-success {
+    @apply bg-green-50 border-green-200 text-green-800;
+  }
+  
+  .alert-error {
+    @apply bg-red-50 border-red-200 text-red-800;
+  }
+  
+  .alert-warning {
+    @apply bg-amber-50 border-amber-200 text-amber-800;
+  }
+  
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply bg-rose-pink/10 text-rose-pink;
+  }
+  
+  .badge-secondary {
+    @apply bg-gray-100 text-gray-800;
+  }
+  
+  /* Tabs */
+  .tabs-list {
+    @apply inline-flex h-10 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground;
+  }
+  
+  .tabs-trigger {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium 
+           ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
+           focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 
+           data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Blob Animations */
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animate-blob-delayed {
+  animation: blob 7s infinite 2s;
+}
+
+.animate-blob-more-delayed {
+  animation: blob 7s infinite 4s;
+}
+
